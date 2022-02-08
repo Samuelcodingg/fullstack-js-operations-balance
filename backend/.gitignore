@@ -1,0 +1,3 @@
+node_modules
+
+# I know I should put .env here, but I don't because of you can watch the config variables.
