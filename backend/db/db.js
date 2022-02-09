@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 
 const UserModel = require('../models/user');
+const TypeModel = require('../models/type');
 
 const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
     host: process.env.MYSQL_HOST,
@@ -9,6 +10,7 @@ const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_US
 });
 
 const User = UserModel(sequelize, Sequelize);
+const Type = TypeModel(sequelize, Sequelize);
 
 sequelize.sync({ force: false })
     .then(() => {
@@ -20,5 +22,6 @@ sequelize.sync({ force: false })
 );
 
 module.exports = {
-    User
+    User,
+    Type
 };
