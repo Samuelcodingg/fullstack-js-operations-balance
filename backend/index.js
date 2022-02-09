@@ -1,31 +1,21 @@
 const express = require('express');
 const morgan = require('morgan');
-const mysql = require('mysql');
-const myconnection = require('express-myconnection');
-
 
 require('dotenv').config();
 
 const app = express();
 const port = 7000;
-const dbOptions = {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    port: process.env.MYSQL_PORT,
-    database: process.env.MYSQL_DATABASE
-};
 
 app.disable('x-powered-by');
+require('./db/db');
 
 //Midlewares
 app.use(morgan('dev'));
-app.use(myconnection(mysql, dbOptions, 'single'));
 app.use(express.json());
 
 app.get('/', (req, res) => {
     req.getConnection((err, connection) => {
-        connection.query('CREATE DATABASE IF NOT EXISTS ' + dbOptions.database, (err, rows) => {
+        connection.query('CREATE DATABASE IF NOT EXISTS ' + process.env.MYSQL_DATABASE, (err, rows) => {
             if (err) {
                 console.log(err);
                 res.status(500).send(err);
