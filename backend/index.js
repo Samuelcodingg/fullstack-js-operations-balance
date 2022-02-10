@@ -13,6 +13,8 @@ require('./db/db');
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use('/api/user', require('./routes/user.routes'));
+
 app.get('/', (req, res) => {
     req.getConnection((err, connection) => {
         connection.query('CREATE DATABASE IF NOT EXISTS ' + process.env.MYSQL_DATABASE, (err, rows) => {
