@@ -16,6 +16,11 @@ module.exports = (sequelize, type) => {
                 isEmail: true
             }
         },
+        money: {
+            type: type.INTEGER,
+            allowNull: false,
+            defaultValue: 0
+        },
         password: {
             type: type.STRING,
             allowNull: false
