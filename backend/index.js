@@ -15,6 +15,7 @@ app.use(express.json());
 
 app.use('/api/user', require('./routes/user.routes'));
 app.use('/api/type', require('./routes/type.routes'));
+app.use('/api/operation', require('./routes/operation.routes'));
 
 app.get('/', (req, res) => {
     req.getConnection((err, connection) => {
