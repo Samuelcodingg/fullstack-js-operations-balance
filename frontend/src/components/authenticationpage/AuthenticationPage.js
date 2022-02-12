@@ -15,7 +15,7 @@ export const AuthenticationPage = () => {
                     <div className='d-none d-lg-block col-lg-3'>
                         <img src={person} alt="person" className="position-relative person-auth" />
                     </div>
-                    <div className='col-lg-9 bg-white d-flex flex-column justify-content-center align-items-center min-vh-100 rounded-left'>
+                    <div className='col-lg-9 bg-white d-flex flex-column justify-content-center align-items-center min-vh-100 rounded-left remove-rounded-left'>
                         <h1 className='text-center'>Alkemy Challenge Fullstack JS</h1>
                         { formState === 0 ? <LoginForm setFormState={setFormState} /> : <RegisterForm setFormState={setFormState} /> }
                     </div>
