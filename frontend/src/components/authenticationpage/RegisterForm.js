@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
+import { Redirect } from 'react-router-dom';
+import { isAuhenticated, signup } from '../../api/auth';
 
 
 export const RegisterForm = ({ setFormState }) => {
@@ -8,10 +10,13 @@ export const RegisterForm = ({ setFormState }) => {
         name: '',
         email: '',
         password: '',
-        passwordConfirm: ''
+        passwordConfirm: '',
+        redirectToReferrer: false
     })
 
-    const { name, email, password, passwordConfirm } = values;
+    const { name, email, password, passwordConfirm, redirectToReferrer } = values;
+
+    const { token } = isAuhenticated();
 
     const handleChange = name => event => {
         setValues({ ...values, [name]: event.target.value });
@@ -46,15 +51,47 @@ export const RegisterForm = ({ setFormState }) => {
             return;
         }
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'You have successfully registered!'
-        })
+        const user = {
+            name,
+            email,
+            password
+        }
+
+        signup(user)
+            .then(data => {
+                if(data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.error,
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'You have successfully registered!',
+                    })
+                    setValues({
+                        name: '',
+                        email: '',
+                        password: '',
+                        passwordConfirm: ''
+                    }
+                    )
+                    setFormState(1);
+                }
+            });
+    }
+
+    const redirectUser = () => {
+        if(redirectToReferrer || token) {
+            return <Redirect to='/' />
+        }
     }
 
     return (
         <form>
+            {redirectUser()}
             <h5 className='text-center'>Sign up and take a control of your money</h5>
             <div className='form-group mt-4'>
                 <input

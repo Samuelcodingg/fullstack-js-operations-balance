@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
+import { Redirect } from 'react-router-dom';
+import { authenticate, isAuhenticated, signin } from '../../api/auth';
 
 export const LoginForm = ({ setFormState }) => {
 
     const [values, setValues] = useState({
         email: '',
-        password: ''
+        password: '',
+        redirectToReferrer: false
     })
 
-    const { email, password } = values;
+    const { email, password, redirectToReferrer } = values;
+
+    const token = isAuhenticated();
 
     const handleChange = name => event => {
         setValues({ ...values, [name]: event.target.value });
@@ -26,16 +31,40 @@ export const LoginForm = ({ setFormState }) => {
             return;
         }
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'You have successfully logged in!'
-        })
+        const user = {
+            email,
+            password
+        }
+
+        signin(user)
+            .then(data => {
+                if(data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.error,
+                    })
+                    return;
+                }
+
+                authenticate(data, () => {
+                    setValues({ ...values, redirectToReferrer: true });
+                })
+                
+            }
+            );
+
     }
 
+    const redirectUser = () => {
+        if(redirectToReferrer || token) {
+            return <Redirect to='/' />
+        }
+    }
 
     return (
         <form>
+            {redirectUser()}
             <h5 className='text-center'>Log in and check your account</h5>
 
             <div className='form-group mt-4'>
