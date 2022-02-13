@@ -1,4 +1,4 @@
-const { Operation } = require('../db/db');
+const { Operation, Type } = require('../db/db');
 const { User } = require('../db/db');
 
 exports.create = (req, res) => {
@@ -46,4 +46,19 @@ exports.create = (req, res) => {
         );
 };
 
-    
+exports.listById = (req, res) => {
+    //get operations list
+    Operation.findAll({
+        where: {
+            user_id: req.params.id
+        }
+        })
+        .then(data => {
+            res.send(data);
+        }
+        )
+        .catch(err => {
+            res.status(500).send({ message: err.message });
+        }
+        );
+};
