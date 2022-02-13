@@ -1,7 +1,91 @@
 import React from 'react';
 
 export const HomePage = () => {
+
   return (
-    <h1>HomePage</h1>
+    <div className='bg-principal min-vh-100'>
+      <div className='container py-5'>
+        <div className='text-white d-flex align-items-center mb-4 pointer'>
+          <i className="fa-solid fa-right-from-bracket"></i> &nbsp;
+          <h5 className='mb-0'>Logout</h5>
+        </div>
+        <div className='row'>
+          <div className='col-md-8 bg-white rounded px-4 order-2 order-md-1 mt-5 mt-md-0'>
+            <h1 className='mt-4'>
+              Hi, Samuel!
+            </h1>
+            <div className='container my-5'>
+              <div className='row'>
+                <div className='rounded border border-secondary col-12 col-md-6 mx-auto py-5'>
+                  <h2 className='text-center'>Your balance</h2>
+                  <h1 className='text-center'>$0.00</h1>
+                  <p className='mb-0'>Last operation: -12.00</p>
+                </div>  
+              </div>
+            </div>
+            <div className='my-5'>
+              <h4>History</h4>
+              <table className='table table-striped table-hover'>
+                <thead>
+                  <tr>
+                    <th scope='col'>#</th>
+                    <th scope='col'>Concept</th>
+                    <th scope='col'>Amount</th>
+                    <th scope='col'>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope='row'>1</th>
+                    <td>Salary</td>
+                    <td>$12.00</td>
+                    <td>12/12/2020</td>
+                  </tr>
+                  <tr>
+                    <th scope='row'>2</th>
+                    <td>Salary</td>
+                    <td>$12.00</td>
+                    <td>12/12/2020</td>
+                  </tr>
+                  <tr>
+                    <th scope='row'>3</th>
+                    <td>Salary</td>
+                    <td>$12.00</td>
+                    <td>12/12/2020</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+          </div>
+          <div className='offset-md-1 col-md-3 bg-white rounded form-operations order-1 order-md-2'>
+            <form className='my-5'>
+              <h5 className='text-center'>
+                Add operation
+              </h5>
+              <div className='form-group mt-4'>
+                <input type='text' className='form-control' placeholder='Concept' />
+              </div>
+              <div className='form-group mt-4'>
+                <input type='text' className='form-control' placeholder='Amount' />
+              </div>
+              <div className='form-group mt-4'>
+                <select className='form-control'>
+                  <option>Expense</option>
+                  <option>Income</option>
+                </select>
+              </div>
+              <div className='form-group mt-4'>
+                <button 
+                    className='w-100 rounded border-0 bg-principal text-white py-2'
+                >
+                    Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
