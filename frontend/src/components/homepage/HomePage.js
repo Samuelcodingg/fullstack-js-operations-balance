@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { isAuhenticated } from '../../api/auth';
+import Swal from 'sweetalert2';
+import { createOperation } from '../../api/operation';
 
 export const HomePage = () => {
+
+  const dateToday = new Date();
+
+  const [valuesOperation, setValuesOperation] = useState({
+    concept: '',
+    amount: '',
+    type_id: '',
+    date: `${dateToday.getFullYear()}-${dateToday.getMonth() + 1}-${dateToday.getDate()}`
+  });
+
+  const { concept, amount, type_id, date } = valuesOperation;
 
   const { user } = isAuhenticated();
 
@@ -17,6 +30,51 @@ export const HomePage = () => {
 
     window.location.href = '/authentication';
   }
+
+  const handleChange = name => event => {
+    setValuesOperation({ ...valuesOperation, [name]: event.target.value });
+  }
+
+  const clickSubmit = event => {
+    event.preventDefault();
+
+    if(concept === '' || amount === '' || type_id === '') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'All fields are required!',
+      })
+      return;
+    }
+
+    const operation = {
+      concept,
+      amount: parseInt(amount),
+      type_id: parseInt(type_id),
+      date
+    }
+
+    createOperation({...operation, user_id: user.id})
+      .then(data => {
+        if(data.error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.error,
+          })
+          return;
+        }
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Operation created successfully!',
+        })
+      }
+      );
+  }
+
+
 
   return (
     <div className='bg-principal min-vh-100'>
@@ -82,20 +140,40 @@ export const HomePage = () => {
                 Add operation
               </h5>
               <div className='form-group mt-4'>
-                <input type='text' className='form-control' placeholder='Concept' />
+                <input 
+                  type='text' 
+                  className='form-control' 
+                  placeholder='Concept' 
+                  name='concept'
+                  value={concept}
+                  onChange={handleChange('concept')}
+                />
               </div>
               <div className='form-group mt-4'>
-                <input type='text' className='form-control' placeholder='Amount' />
+                <input 
+                  type='text' 
+                  className='form-control' 
+                  placeholder='Amount' 
+                  name='amount'
+                  value={amount}
+                  onChange={handleChange('amount')}
+                />
               </div>
               <div className='form-group mt-4'>
-                <select className='form-control'>
-                  <option>Expense</option>
-                  <option>Income</option>
+                <select 
+                  className='form-control'
+                  name='type_id'
+                  value={type_id}
+                  onChange={handleChange('type_id')}
+                >
+                  <option value={2}>Expense</option>
+                  <option value={1}>Income</option>
                 </select>
               </div>
               <div className='form-group mt-4'>
                 <button 
                     className='w-100 rounded border-0 bg-principal text-white py-2'
+                    onClick={clickSubmit}
                 >
                     Submit
                 </button>
