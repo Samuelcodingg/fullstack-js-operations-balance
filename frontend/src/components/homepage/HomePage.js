@@ -1,11 +1,29 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+import { isAuhenticated } from '../../api/auth';
 
 export const HomePage = () => {
 
+  const { user } = isAuhenticated();
+
+  const redirectUser = () => {
+    if(!user) {
+      return <Redirect to='/authentication' />
+    }
+  }
+
+  const logout = () => {
+    localStorage.removeItem('jwt');
+
+    window.location.href = '/authentication';
+  }
+
   return (
     <div className='bg-principal min-vh-100'>
+      {redirectUser()}
       <div className='container py-5'>
-        <div className='text-white d-flex align-items-center mb-4 pointer'>
+        <div className='text-white d-flex align-items-center mb-4 pointer'
+          onClick={logout}>
           <i className="fa-solid fa-right-from-bracket"></i> &nbsp;
           <h5 className='mb-0'>Logout</h5>
         </div>
