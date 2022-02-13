@@ -13,3 +13,16 @@ export const createOperation = async (operation) => {
 
     return response.json();
 }
+
+export const getOPerationsById = async (id) => {
+
+    const response = await fetch(`${API}/operation/list/${id}`, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+    });
+
+    return response.json();
+}

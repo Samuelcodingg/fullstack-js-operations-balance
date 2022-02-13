@@ -89,3 +89,19 @@ exports.login = (req, res) => {
             res.status(500).send({ message: err.message });
         });
 };
+
+exports.getUser = (req, res) => {
+    User.findOne(
+        {
+            where: {
+                id: req.params.id
+            }
+        }
+    )
+        .then(user => {
+            res.send(user);
+        })
+        .catch(err => {
+            res.status(500).send({ message: err.message });
+        });
+};

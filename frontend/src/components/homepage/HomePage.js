@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { isAuhenticated } from '../../api/auth';
 import Swal from 'sweetalert2';
-import { createOperation } from '../../api/operation';
+import { createOperation, getOPerationsById } from '../../api/operation';
+import { getBalanceInfo } from '../../api/user';
 
 export const HomePage = () => {
 
@@ -11,19 +12,51 @@ export const HomePage = () => {
   const [valuesOperation, setValuesOperation] = useState({
     concept: '',
     amount: '',
-    type_id: '',
+    type_id: 2,
     date: `${dateToday.getFullYear()}-${dateToday.getMonth() + 1}-${dateToday.getDate()}`
   });
+
+  const [operating, setOperating] = useState(false);
 
   const { concept, amount, type_id, date } = valuesOperation;
 
   const { user } = isAuhenticated();
+
+  const [balanceInfo, setBalanceInfo] = useState({
+    money: 0
+  });
+
+  const { money } = balanceInfo;
+
+  const [operations, setOperations] = useState([]);
 
   const redirectUser = () => {
     if(!user) {
       return <Redirect to='/authentication' />
     }
   }
+
+  useEffect(()=> {
+    getBalanceInfo(user.id)
+      .then(data => {
+        setBalanceInfo({...balanceInfo, money: data.money});
+      }
+      )
+      .catch(err => {
+        console.log(err);
+      }
+      );
+
+    getOPerationsById(user.id)
+      .then(data => {
+        setOperations(data);
+      }
+      )
+      .catch(err => {
+        console.log(err);
+      }
+      );
+  },[operating]);
 
   const logout = () => {
     localStorage.removeItem('jwt');
@@ -37,6 +70,8 @@ export const HomePage = () => {
 
   const clickSubmit = event => {
     event.preventDefault();
+
+    console.log(valuesOperation);
 
     if(concept === '' || amount === '' || type_id === '') {
       Swal.fire({
@@ -70,9 +105,14 @@ export const HomePage = () => {
           title: 'Success',
           text: 'Operation created successfully!',
         })
+
+        setValuesOperation({ ...valuesOperation, concept: '', amount: '', type_id: '', date: `${dateToday.getFullYear()}-${dateToday.getMonth() + 1}-${dateToday.getDate()}` });
+      
+        setOperating(!operating);
       }
       );
   }
+
 
 
 
@@ -88,14 +128,13 @@ export const HomePage = () => {
         <div className='row'>
           <div className='col-md-8 bg-white rounded px-4 order-2 order-md-1 mt-5 mt-md-0'>
             <h1 className='mt-4'>
-              Hi, Samuel!
+              Hi, {user.name}!
             </h1>
             <div className='container my-5'>
               <div className='row'>
                 <div className='rounded border border-secondary col-12 col-md-6 mx-auto py-5'>
                   <h2 className='text-center'>Your balance</h2>
-                  <h1 className='text-center'>$0.00</h1>
-                  <p className='mb-0'>Last operation: -12.00</p>
+                  <h1 className='text-center'>${money}</h1>
                 </div>  
               </div>
             </div>
@@ -111,24 +150,16 @@ export const HomePage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope='row'>1</th>
-                    <td>Salary</td>
-                    <td>$12.00</td>
-                    <td>12/12/2020</td>
-                  </tr>
-                  <tr>
-                    <th scope='row'>2</th>
-                    <td>Salary</td>
-                    <td>$12.00</td>
-                    <td>12/12/2020</td>
-                  </tr>
-                  <tr>
-                    <th scope='row'>3</th>
-                    <td>Salary</td>
-                    <td>$12.00</td>
-                    <td>12/12/2020</td>
-                  </tr>
+                  {
+                    operations.map((operation, index) => (
+                      <tr key={index}>
+                        <th scope='row'>{index + 1}</th>
+                        <td>{operation.concept}</td>
+                        <td>{ operation.type_id === 1 ? '+' : '-' }${operation.amount}</td>
+                        <td>{operation.date.substring(0,10)}</td>
+                      </tr>
+                    ))
+                  }
                 </tbody>
               </table>
             </div>
@@ -162,11 +193,10 @@ export const HomePage = () => {
               <div className='form-group mt-4'>
                 <select 
                   className='form-control'
-                  name='type_id'
                   value={type_id}
                   onChange={handleChange('type_id')}
                 >
-                  <option value={2}>Expense</option>
+                  <option selected value={2}>Expense</option>
                   <option value={1}>Income</option>
                 </select>
               </div>
